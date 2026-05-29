@@ -2,36 +2,39 @@ import { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
+const photo = (id: string) =>
+  `https://images.unsplash.com/${id}?auto=format&fit=crop&w=600&h=750&q=80`
+
 const contestants = [
   {
     id: 'maria',
     name: 'Maria Silva',
-    photoUrl: 'https://picsum.photos/seed/miss-maria/600/750',
+    photoUrl: photo('photo-1534528741775-53994a69daeb'),
   },
   {
     id: 'ana',
     name: 'Ana Costa',
-    photoUrl: 'https://picsum.photos/seed/miss-ana/600/750',
+    photoUrl: photo('photo-1529626455594-4ff0802cfb7e'),
   },
   {
     id: 'julia',
     name: 'Julia Mendes',
-    photoUrl: 'https://picsum.photos/seed/miss-julia/600/750',
+    photoUrl: photo('photo-1488426862026-3ee34a7d66df'),
   },
   {
     id: 'beatriz',
     name: 'Beatriz Lima',
-    photoUrl: 'https://picsum.photos/seed/miss-beatriz/600/750',
+    photoUrl: photo('photo-1517841905240-472988babdf9'),
   },
   {
     id: 'carolina',
     name: 'Carolina Rocha',
-    photoUrl: 'https://picsum.photos/seed/miss-carolina/600/750',
+    photoUrl: photo('photo-1524504388940-b1c1722653e1'),
   },
   {
     id: 'fernanda',
     name: 'Fernanda Alves',
-    photoUrl: 'https://picsum.photos/seed/miss-fernanda/600/750',
+    photoUrl: photo('photo-1529139574486-3b746655ecb7'),
   },
 ]
 
