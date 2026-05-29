@@ -76,20 +76,20 @@ jobs:
       - name: Validate deploy configuration
         run: |
           missing=0
-          if [ -z "${{ secrets.VPS_HOST }}" ]; then
-            echo "::error::Missing secret VPS_HOST (ex: 2.25.222.38)"
+          if [ -z "${{ vars.VPS_HOST }}" ]; then
+            echo "::error::Missing repository variable VPS_HOST (ex: 2.25.148.38)"
             missing=1
           fi
-          if [ -z "${{ secrets.VPS_USER }}" ]; then
-            echo "::error::Missing secret VPS_USER (ex: root)"
+          if [ -z "${{ vars.VPS_USER }}" ]; then
+            echo "::error::Missing repository variable VPS_USER (ex: root)"
             missing=1
           fi
-          if [ -z "${{ secrets.VPS_SSH_KEY }}" ]; then
-            echo "::error::Missing secret VPS_SSH_KEY (private key)"
+          if [ -z "${{ vars.VPS_SSH_KEY }}" ]; then
+            echo "::error::Missing repository variable VPS_SSH_KEY (private key)"
             missing=1
           fi
-          if [ -z "${{ secrets.VPS_APP_PATH }}" ]; then
-            echo "::error::Missing secret VPS_APP_PATH (ex: /opt/miss-votes)"
+          if [ -z "${{ vars.VPS_APP_PATH }}" ]; then
+            echo "::error::Missing repository variable VPS_APP_PATH (ex: /opt/miss-votes)"
             missing=1
           fi
           if [ "$missing" -eq 1 ]; then
@@ -99,13 +99,13 @@ jobs:
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1.2.2
         with:
-          host: ${{ secrets.VPS_HOST }}
-          username: ${{ secrets.VPS_USER }}
-          key: ${{ secrets.VPS_SSH_KEY }}
+          host: ${{ vars.VPS_HOST }}
+          username: ${{ vars.VPS_USER }}
+          key: ${{ vars.VPS_SSH_KEY }}
           command_timeout: 30m
           script: |
             set -euo pipefail
-            cd "${{ secrets.VPS_APP_PATH }}"
+            cd "${{ vars.VPS_APP_PATH }}"
             git fetch origin main
             git reset --hard origin/main
             docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
