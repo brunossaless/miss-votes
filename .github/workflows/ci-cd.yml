@@ -67,17 +67,43 @@ jobs:
   deploy:
     name: Deploy to VPS
     needs: ci
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: >-
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main' &&
+      vars.DEPLOY_ENABLED == 'true'
     runs-on: ubuntu-latest
 
     steps:
+      - name: Validate deploy configuration
+        run: |
+          missing=0
+          if [ -z "${{ secrets.VPS_HOST }}" ]; then
+            echo "::error::Missing secret VPS_HOST (ex: 2.25.148.38)"
+            missing=1
+          fi
+          if [ -z "${{ secrets.VPS_USER }}" ]; then
+            echo "::error::Missing secret VPS_USER (ex: root)"
+            missing=1
+          fi
+          if [ -z "${{ secrets.VPS_SSH_KEY }}" ]; then
+            echo "::error::Missing secret VPS_SSH_KEY (private key)"
+            missing=1
+          fi
+          if [ -z "${{ secrets.VPS_APP_PATH }}" ]; then
+            echo "::error::Missing secret VPS_APP_PATH (ex: /opt/miss-votes)"
+            missing=1
+          fi
+          if [ "$missing" -eq 1 ]; then
+            exit 1
+          fi
+
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1.2.2
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
-          script_stop: true
+          command_timeout: 30m
           script: |
             set -euo pipefail
             cd "${{ secrets.VPS_APP_PATH }}"
