@@ -30,6 +30,8 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 RUN npm install --omit=dev prisma tsx @prisma/client \
   && chown -R nextjs:nodejs /app/node_modules
 
+ENV PATH="/app/node_modules/.bin:${PATH}"
+
 COPY docker/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 

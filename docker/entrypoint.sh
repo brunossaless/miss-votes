@@ -1,13 +1,16 @@
 #!/bin/sh
 set -e
 
-echo "Applying database schema..."
-npx prisma db push --skip-generate
+echo "==> Generating Prisma client..."
+npx prisma generate
+
+echo "==> Applying database schema..."
+npx prisma db push
 
 if [ "${SEED_DATABASE:-true}" = "true" ]; then
-  echo "Seeding database..."
-  npx prisma db seed
+  echo "==> Seeding database..."
+  node ./node_modules/tsx/dist/cli.mjs prisma/seed.ts
 fi
 
-echo "Starting application..."
+echo "==> Starting Next.js on 0.0.0.0:${PORT:-3000}..."
 exec node server.js
