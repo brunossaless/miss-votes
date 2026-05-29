@@ -1,3 +1,5 @@
+name: miss-votes
+
 services:
   db:
     image: postgres:16-alpine
@@ -29,8 +31,6 @@ services:
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER:-missvotes}:${POSTGRES_PASSWORD:-changeme}@db:5432/${POSTGRES_DB:-missvotes}
       NODE_ENV: production
-    ports:
-      - "${APP_PORT:-3000}:3000"
 
 volumes:
   postgres_data:

@@ -1,3 +1,4 @@
+# Produção: Caddy expõe a app na rede; app e banco ficam só na rede interna
 services:
   app:
     environment:
@@ -9,8 +10,7 @@ services:
     depends_on:
       - app
     ports:
-      - "80:80"
-      - "443:443"
+      - "${PUBLIC_HTTP_PORT:-8080}:80"
     volumes:
       - ./docker/Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy_data:/data

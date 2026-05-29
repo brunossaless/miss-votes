@@ -3,6 +3,7 @@ set -euo pipefail
 
 REPO_URL="${REPO_URL:-https://github.com/brunossaless/miss-votes.git}"
 APP_DIR="${APP_DIR:-/opt/miss-votes}"
+PUBLIC_HTTP_PORT="${PUBLIC_HTTP_PORT:-8080}"
 
 echo "==> Instalando dependências..."
 export DEBIAN_FRONTEND=noninteractive
@@ -32,6 +33,7 @@ if [ ! -f .env ]; then
 POSTGRES_USER=missvotes
 POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
 POSTGRES_DB=missvotes
+PUBLIC_HTTP_PORT=${PUBLIC_HTTP_PORT}
 APP_PORT=3000
 SEED_DATABASE=true
 EOF
@@ -41,6 +43,9 @@ EOF
   echo ""
 else
   echo "Usando .env existente."
+  # shellcheck disable=SC1091
+  set -a && source .env && set +a
+  PUBLIC_HTTP_PORT="${PUBLIC_HTTP_PORT:-8080}"
 fi
 
 echo "==> Subindo aplicação (build pode levar alguns minutos)..."
@@ -50,13 +55,14 @@ echo "==> Configurando firewall..."
 ufw allow 22/tcp
 ufw allow 80/tcp
 ufw allow 443/tcp
+ufw allow "${PUBLIC_HTTP_PORT}"/tcp
 ufw --force enable || true
 
 PUBLIC_IP="$(curl -fsSL --max-time 5 ifconfig.me 2>/dev/null || hostname -I | awk '{print $1}')"
 
 echo ""
 echo "Deploy concluído."
-echo "Acesse: http://${PUBLIC_IP}"
+echo "Acesse: http://${PUBLIC_IP}:${PUBLIC_HTTP_PORT}"
 echo ""
 echo "Comandos úteis:"
 echo "  cd ${APP_DIR} && docker compose -f docker-compose.yml -f docker-compose.prod.yml logs -f"

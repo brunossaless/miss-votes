@@ -1,0 +1,5 @@
+# Dev local: acesso direto sem Caddy (http://localhost:3000)
+services:
+  app:
+    ports:
+      - "${APP_PORT:-3000}:3000"
