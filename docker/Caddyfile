@@ -1,6 +1,6 @@
 :80 {
 	reverse_proxy app:3000 {
-		health_uri /
+		health_uri /api/health
 		health_interval 10s
 		health_timeout 5s
 	}

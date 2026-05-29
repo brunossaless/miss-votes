@@ -12,6 +12,12 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
 RUN npm run build
+RUN npx esbuild prisma/seed.ts \
+  --bundle \
+  --platform=node \
+  --format=cjs \
+  --packages=external \
+  --outfile=prisma/seed.bundle.cjs
 
 FROM base AS runner
 WORKDIR /app
@@ -27,7 +33,7 @@ COPY --from=builder /app/package.json ./package.json
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-RUN npm install --omit=dev prisma tsx @prisma/client \
+RUN npm install --omit=dev prisma @prisma/client \
   && chown -R nextjs:nodejs /app/node_modules
 
 ENV PATH="/app/node_modules/.bin:${PATH}"
