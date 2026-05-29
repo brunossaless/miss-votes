@@ -1,0 +1,30 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Contestant {
+  id        String   @id
+  name      String
+  photoUrl  String
+  votes     Vote[]
+  createdAt DateTime @default(now())
+}
+
+model Vote {
+  id            String     @id @default(cuid())
+  contestantId  String
+  contestant    Contestant @relation(fields: [contestantId], references: [id])
+  packageId     String
+  votes         Int
+  amountCents   Int
+  email         String
+  createdAt     DateTime   @default(now())
+
+  @@index([contestantId])
+  @@index([email])
+}
