@@ -72,13 +72,12 @@ jobs:
       github.ref == 'refs/heads/main' &&
       vars.DEPLOY_ENABLED == 'true'
     runs-on: ubuntu-latest
-
     steps:
       - name: Validate deploy configuration
         run: |
           missing=0
           if [ -z "${{ secrets.VPS_HOST }}" ]; then
-            echo "::error::Missing secret VPS_HOST (ex: 2.25.148.38)"
+            echo "::error::Missing secret VPS_HOST (ex: 2.25.222.38)"
             missing=1
           fi
           if [ -z "${{ secrets.VPS_USER }}" ]; then
